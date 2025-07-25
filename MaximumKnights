@@ -1,0 +1,63 @@
+public class MaximumKnights {
+    static int maxKnights = -1;
+
+    public static boolean isSafe(char[][] board, int row, int col) {
+        int n = board.length;
+
+        int[][] moves = {
+                {-2, -1}, {-2, +1},
+                {-1, -2}, {-1, +2},
+                {+1, -2}, {+1, +2},
+                {+2, -1}, {+2, +1}
+        };
+
+        for (int[] move : moves) {
+            int i = row + move[0];
+            int j = col + move[1];
+            if (i >= 0 && i < n && j >= 0 && j < n && board[i][j] == 'K') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static void nKnight(char[][] board, int row, int col, int num) {
+        int n = board.length;
+
+        // ✅ Base case
+        if (row == n) {
+            maxKnights = Math.max(maxKnights, num);
+            return;
+        }
+
+        // Move to next row if col exceeds
+        if (col == n) {
+            nKnight(board, row + 1, 0, num);
+            return;
+        }
+
+        // ✅ Option 1: Place knight if safe
+        if (isSafe(board, row, col)) {
+            board[row][col] = 'K';
+            nKnight(board, row, col + 1, num + 1);
+            board[row][col] = 'X'; // Backtrack
+        }
+
+        // ✅ Option 2: Skip placing knight
+        nKnight(board, row, col + 1, num);
+    }
+
+    public static void main(String[] args) {
+        int n = 3;
+        char[][] board = new char[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                board[i][j] = 'X';
+            }
+        }
+
+        nKnight(board, 0, 0, 0);
+        System.out.println("Maximum knights that can be placed: " + maxKnights);
+    }
+}
